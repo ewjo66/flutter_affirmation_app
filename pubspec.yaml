@@ -1,0 +1,25 @@
+name: daily_affirmations
+description: A minimalist Flutter app that surfaces a "Quote of the Day," lets users save favorites, and share inspiration.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.2.2
+  http: ^1.1.0
+  share_plus: ^7.2.1
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/quotes/
