@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +28,7 @@ class QuoteService {
       final List<dynamic> jsonData = json.decode(jsonString);
       _allQuotes = jsonData.map((json) => Quote.fromJson(json)).toList();
     } catch (e) {
-      print('Error loading local quotes: $e');
+      debugPrint('Error loading local quotes: $e');
       _allQuotes = [];
     }
   }
@@ -41,7 +42,7 @@ class QuoteService {
         _favoriteQuotes = jsonData.map((json) => Quote.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading favorites: $e');
+      debugPrint('Error loading favorites: $e');
       _favoriteQuotes = [];
     }
   }
@@ -113,7 +114,7 @@ class QuoteService {
         );
       }
     } catch (e) {
-      print('Error fetching quote from API: $e');
+      debugPrint('Error fetching quote from API: $e');
     }
     return null;
   }
