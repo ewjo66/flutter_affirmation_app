@@ -1,12 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:daily_affirmations/models/quote.dart';
 import 'package:daily_affirmations/services/quote_service.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('QuoteService', () {
     late QuoteService quoteService;
 
-    setUp(() {
+    setUp(() async {
+      // Mock SharedPreferences with empty data
+      SharedPreferences.setMockInitialValues({});
       quoteService = QuoteService();
     });
 
@@ -23,13 +28,13 @@ void main() {
     test('should add and remove favorites', () async {
       await quoteService.initialize();
       final quote = quoteService.allQuotes.first;
-      
+
       expect(quoteService.isFavorite(quote), isFalse);
-      
+
       await quoteService.toggleFavorite(quote);
       expect(quoteService.isFavorite(quote), isTrue);
       expect(quoteService.favoriteQuotes, contains(quote));
-      
+
       await quoteService.toggleFavorite(quote);
       expect(quoteService.isFavorite(quote), isFalse);
       expect(quoteService.favoriteQuotes, isNot(contains(quote)));
@@ -39,10 +44,10 @@ void main() {
       await quoteService.initialize();
       final quote1 = quoteService.allQuotes[0];
       final quote2 = quoteService.allQuotes[1];
-      
+
       await quoteService.toggleFavorite(quote1);
       await quoteService.toggleFavorite(quote2);
-      
+
       expect(quoteService.favoriteQuotes.length, equals(2));
       expect(quoteService.favoriteQuotes, contains(quote1));
       expect(quoteService.favoriteQuotes, contains(quote2));

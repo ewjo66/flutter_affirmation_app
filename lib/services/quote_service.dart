@@ -154,7 +154,14 @@ class QuoteService {
   }
 
   Future<void> loadNextQuote() async {
-    _dailyQuote = _selectRandomQuote();
+    // Try API first, fallback to local
+    Quote? apiQuote = await fetchQuoteFromApi();
+    if (apiQuote != null) {
+      _dailyQuote = apiQuote;
+    } else {
+      _dailyQuote = _selectRandomQuote();
+    }
+
     if (_dailyQuote != null) {
       final prefs = await SharedPreferences.getInstance();
       final String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
