@@ -23,24 +23,24 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.daily_affirmations"
-    compileSdk 34
+    namespace = "com.example.flutter_affirmation_app"
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = "com.example.flutter_affirmation_app"
+        minSdkVersion = flutter.minSdkVersion
+        targetSdk = 36
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    defaultConfig {
-        applicationId "com.example.daily_affirmations"
-        minSdk 21
-        targetSdk 34
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
+        jvmTarget = '17'
     }
 
     buildTypes {
@@ -53,3 +53,4 @@ android {
 flutter {
     source '../..'
 }
+

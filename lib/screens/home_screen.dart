@@ -3,34 +3,35 @@ import 'package:share_plus/share_plus.dart';
 import '../models/quote.dart';
 import '../services/quote_service.dart';
 import 'favorites_screen.dart';
+import 'add_quote_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final QuoteService quoteService;
 
-  const HomeScreen({Key? key, required this.quoteService}) : super(key: key);
+  const HomeScreen({super.key, required this.quoteService});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isRefreshing = false;
-
   @override
   Widget build(BuildContext context) {
     final quote = widget.quoteService.dailyQuote;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Daily Affirmations'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
+        title: const Text(
+          'Daily Affirmations',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.5,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite),
+            icon: const Icon(Icons.bookmark_outline, size: 24),
             onPressed: () {
               Navigator.push(
                 context,
@@ -42,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ).then((_) => setState(() {}));
             },
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: quote == null
@@ -56,101 +58,113 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 32,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
-                            Icons.format_quote,
-                            size: 48,
-                            color: Colors.teal,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.format_quote,
+                                size: 48,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withValues(
+                                      alpha: 0.3,
+                                    ),
+                              ),
+                              const SizedBox(width: 16),
+                              Transform.rotate(
+                                angle: 3.14159,
+                                child: Icon(
+                                  Icons.format_quote,
+                                  size: 48,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withValues(
+                                        alpha: 0.3,
+                                      ),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 40),
                           Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
                             child: Padding(
-                              padding: const EdgeInsets.all(24.0),
+                              padding: const EdgeInsets.all(32),
                               child: Column(
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Quote of the Day',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.teal,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          letterSpacing: 0.5,
+                                        ),
                                   ),
                                   const SizedBox(height: 24),
                                   Text(
                                     quote.text,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w400,
-                                      height: 1.5,
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.6,
+                                        ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 20),
                                   Text(
                                     '— ${quote.author}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.grey[600],
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          fontStyle: FontStyle.italic,
+                                        ),
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                          const SizedBox(height: 32),
+                          const SizedBox(height: 48),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              ElevatedButton.icon(
+                              _buildActionButton(
+                                context,
+                                icon: widget.quoteService.isFavorite(quote)
+                                    ? Icons.favorite
+                                    : Icons.favorite_outline,
+                                label: 'Like',
                                 onPressed: () => _toggleFavorite(quote),
-                                icon: Icon(
-                                  widget.quoteService.isFavorite(quote)
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                ),
-                                label: Text(
-                                  widget.quoteService.isFavorite(quote)
-                                      ? 'Saved'
-                                      : 'Save',
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                ),
+                                isActive: widget.quoteService.isFavorite(quote),
                               ),
-                              const SizedBox(width: 16),
-                              ElevatedButton.icon(
+                              _buildActionButton(
+                                context,
+                                icon: Icons.share_outlined,
+                                label: 'Share',
                                 onPressed: () => _shareQuote(quote),
-                                icon: const Icon(Icons.share),
-                                label: const Text('Share'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal[700],
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                ),
+                              ),
+                              _buildActionButton(
+                                context,
+                                icon: Icons.refresh_outlined,
+                                label: 'Next',
+                                onPressed: _refreshQuote,
                               ),
                             ],
                           ),
-                          if (_isRefreshing) ...[
-                            const SizedBox(height: 24),
-                            const CircularProgressIndicator(),
-                          ],
                         ],
                       ),
                     ),
@@ -158,37 +172,69 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _isRefreshing ? null : _refreshQuote,
-        backgroundColor: Colors.teal,
-        child: const Icon(Icons.refresh, color: Colors.white),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddQuoteScreen(
+                quoteService: widget.quoteService,
+              ),
+            ),
+          );
+          if (result == true && mounted) {
+            setState(() {});
+          }
+        },
+        icon: const Icon(Icons.add),
+        label: const Text('Add Quote'),
       ),
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    bool isActive = false,
+  }) {
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(icon),
+          onPressed: onPressed,
+          style: IconButton.styleFrom(
+            backgroundColor: isActive
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
+                : Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+            foregroundColor:
+                isActive ? Colors.red : Theme.of(context).colorScheme.primary,
+            padding: const EdgeInsets.all(12),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+      ],
     );
   }
 
   Future<void> _refreshQuote() async {
-    setState(() => _isRefreshing = true);
-    await widget.quoteService.refreshDailyQuote();
-    setState(() => _isRefreshing = false);
+    await widget.quoteService.loadNextQuote();
+    if (mounted) {
+      setState(() {});
+    }
   }
 
-  void _toggleFavorite(Quote quote) {
-    widget.quoteService.toggleFavorite(quote);
-    setState(() {});
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          widget.quoteService.isFavorite(quote)
-              ? 'Added to favorites'
-              : 'Removed from favorites',
-        ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+  Future<void> _toggleFavorite(Quote quote) async {
+    await widget.quoteService.toggleFavorite(quote);
+    if (mounted) setState(() {});
   }
 
-  void _shareQuote(Quote quote) {
-    Share.share('${quote.text}\n\n— ${quote.author}');
+  Future<void> _shareQuote(Quote quote) async {
+    await Share.share('${quote.text}\n\n— ${quote.author}');
   }
 }

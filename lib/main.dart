@@ -7,7 +7,7 @@ void main() {
 }
 
 class DailyAffirmationsApp extends StatelessWidget {
-  const DailyAffirmationsApp({Key? key}) : super(key: key);
+  const DailyAffirmationsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,20 +15,48 @@ class DailyAffirmationsApp extends StatelessWidget {
       title: 'Daily Affirmations',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.teal,
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
+          seedColor: const Color(0xFF6366F1),
           brightness: Brightness.light,
         ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Color(0xFF6366F1),
+          foregroundColor: Colors.white,
+        ),
+        cardTheme: CardThemeData(
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          color: Colors.white,
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF8F7FF),
       ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6366F1),
+          brightness: Brightness.dark,
+        ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Color(0xFF1F1F3D),
+          foregroundColor: Colors.white,
+        ),
+        scaffoldBackgroundColor: const Color(0xFF0F0F1E),
+      ),
+      themeMode: ThemeMode.system,
       home: const AppInitializer(),
     );
   }
 }
 
 class AppInitializer extends StatefulWidget {
-  const AppInitializer({Key? key}) : super(key: key);
+  const AppInitializer({super.key});
 
   @override
   State<AppInitializer> createState() => _AppInitializerState();
@@ -46,17 +74,29 @@ class _AppInitializerState extends State<AppInitializer> {
 
   Future<void> _initialize() async {
     await _quoteService.initialize();
-    setState(() {
-      _isInitialized = true;
-    });
+    if (mounted) {
+      setState(() {
+        _isInitialized = true;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
-          child: CircularProgressIndicator(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(
+                'Loading Affirmations...',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
         ),
       );
     }
